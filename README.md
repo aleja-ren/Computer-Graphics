@@ -24,3 +24,11 @@ Steps to Generate the Inverted Koch Fractal
   - Apply this process to each of the four resulting segments and continue to subdivide the segments and add inverted triangles at each level of recursion.
 
 ![example](https://github.com/aleja-ren/Computer-Graphics/blob/main/Koch%20Fractal/fractal.gif)
+
+# Klingon ch letter
+
+
+
+![colors](https://github.com/aleja-ren/Computer-Graphics/blob/main/Klingon%20ch%20letter/colors.gif)
+
+![movement](https://github.com/aleja-ren/Computer-Graphics/blob/main/Klingon%20ch%20letter/movement.gif)
