@@ -23,5 +23,5 @@ Steps to Generate the Inverted Koch Fractal
 - Repeat the Process Recursively:
   - Apply this process to each of the four resulting segments and continue to subdivide the segments and add inverted triangles at each level of recursion.
 
-![Example](Koch Fractal/fractal.gif)
+![Example](Computer-Graphics/Koch Fractal/fractal.gif)
 
