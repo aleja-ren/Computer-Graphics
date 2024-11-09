@@ -22,3 +22,5 @@ Steps to Generate the Inverted Koch Fractal
   - This vertex must be in the opposite direction to the outward perpendicular of the segment.
 - Repeat the Process Recursively:
   - Apply this process to each of the four resulting segments and continue to subdivide the segments and add inverted triangles at each level of recursion.
+
+![grab-landing-page](https://github.com/winnie1312/grab/blob/master/grab-landingpage-winnie.gif)
