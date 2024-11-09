@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fractal de Koch - Entrega 6</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            color: #333;
+        }
+        canvas {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+        #controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #depthSlider {
+            width: 200px;
+        }
+    </style>
+    <script id="shader-vs" type="x-shader/x-vertex">#version 300 es
+        /* Es el VERTEX SHADER*/
+        /* Transforma los vertices*/
+        
+        in vec2 aVertexPosition;
+
+        void main(void) {                
+            /* Transforma el vertice a coordenadas homogeneas*/
+            gl_Position = vec4(aVertexPosition, 0.0, 1.0);
+            gl_PointSize = 10.0;
+        }
+    </script>
+    <script id="shader-fs" type="x-shader/x-fragment">#version 300 es
+        /* FRAGMENT SHADER*/
+        /* Coge cada fragment que recibe y lo pinta de con un color*/
+        precision mediump float;
+
+        out vec4 fragColor;
+
+        uniform vec4 colorUniform;
+
+        void main(void) {
+            fragColor = vec4(colorUniform);
+        }
+    </script>
+</head>
+<body onload="initWebGL()">
+    <h1>Fractal de Koch modificado</h1>
+    <canvas id="canvas" width="500" height="500">
+        El navegador no admite WEBGL
+    </canvas>
+    <div id="controls">
+        <label for="depthSlider">Profundidad:</label>
+        <input type="range" id="depthSlider" min="0" max="5" value="0" oninput="updateDepth(this.value)">
+        <span id="sliderValue">0</span> <!-- Elemento para mostrar el valor del slider -->
+    </div>
+    <script src="entrega6.js"></script>
+</body>
+</html>
