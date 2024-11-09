@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+<head>
+    <title>Práctica 1</title>
+    <meta charset="utf-8">
+	<style>
+        body { 
+            background-color: lightgrey;
+        }
+        .container {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .input-colores {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            align-items: flex-start;
+        }
+        #titulo{
+            margin-left: 20px;
+            text-align: center;
+        }
+        .texto {
+            font-family: Arial, sans-serif;
+            color: black;
+        }
+        canvas { 
+            background-color: white; 
+            margin-left: 20px;
+            border-radius: 8px;
+        }
+        .cont-colores, .controles {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .cont-traslacion, .cont-rotacion, .cont-escalado {
+            display: flex;
+            gap: 10px;
+        }
+        .boton {
+            cursor: pointer;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            border: none;
+        }
+        .boton:hover {
+            transform: scale(1.05);
+        }
+        #reset{
+            background-color: #f44336;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+        }
+        #aleatorio{
+            background-color: white;
+            color: black;
+            font-size: 16px;
+            padding: 10px;
+        }
+        #botonHex{
+            background-color: lightslategrey ;
+            color: white;
+            padding: 3px;
+        }
+        #exportar{
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+        }
+        .colores{
+            cursor: pointer;
+        }
+        .traslacion, .rotacion, .escalado{
+            cursor: pointer;
+        }
+        #tx, #ty, #rx, #ry, #rz, #sx, #sy{
+            font-size: small;
+        }
+        #div-colores, #div-transformaciones{
+            background-color: #e6e8ec;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #hexColor{
+            width: 200px;
+        }
+        .div-botones{
+            padding-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+    <script src="toji-gl-matrix-02bb0b7/dist/gl-matrix.js"></script>
+    <script id="shader-vs" type="x-shader/x-vertex">#version 300 es
+        in vec3 aVertexPosition;
+        uniform mat4 uModelMatrix;
+
+        void main(void) {				
+            gl_Position = uModelMatrix*vec4(aVertexPosition, 1.0);
+        }
+    </script>
+    <script id="shader-fs" type="x-shader/x-fragment">#version 300 es
+        precision mediump float;
+
+        uniform vec4 uColor;  // Nuevo uniforme para el color
+        out vec4 fragColor;
+
+        void main(void) {
+            fragColor = uColor;  // Usa el color de la variable uniforme
+        }
+    </script>
+</head>
+<body onload="initWebGL()">
+    <h1 id="titulo" class="texto">Práctica 1: Letra Klingon (ch)</h1>
+
+    <!-- Contenedor principal -->
+    <div class="container">
+        <!-- Canvas -->
+        <canvas id="canvas" width="600" height="600">
+            El navegador no admite WEBGL
+        </canvas>
+        
+        <div class="controles">
+            <!-- Controles de color -->
+            <div class="cont-colores" id="div-colores">
+                <h2 class="texto">Color</h2>
+                <label class="texto">R: <input autocomplete="off" type="range" id="sliderR" class="colores" min="0" max="255" value="0"></label>
+                <label class="texto">G: <input autocomplete="off" type="range" id="sliderG" class="colores" min="0" max="255" value="0"></label>
+                <label class="texto">B: <input autocomplete="off" type="range" id="sliderB" class="colores" min="0" max="255" value="0"></label>
+                <br>
+                <label class="texto">α: <input autocomplete="off" type="range" id="sliderAlfa" class="colores" min="0" max="255" value="255"></label>
+                
+                <div class="input-colores">
+                    <label for="hexColor" class="texto">Ingresa un color HEX:</label>
+                    <input autocomplete="off" type="text" id="hexColor" placeholder="#FFFFFF" maxlength="7">
+                    <button onclick="convertHexToRGB()" id="botonHex" class="boton">Aplicar</button>
+                </div>
+                
+            </div>
+
+            <div id="div-transformaciones">	
+                <h2 class="texto">Transformaciones</h2>
+                <!-- Controles de traslación -->
+                <div class="cont-traslacion">
+                    <h3 class="texto" id="tx">Traslación en X</h3>
+                    <input autocomplete="off" type="range" id="sliderTX" class="traslacion" min="-1" max="1" value="0" step="0.01">
+                    <h3 class="texto" id="ty">Traslación en Y</h3>
+                    <input autocomplete="off" type="range" id="sliderTY" class="traslacion" min="-1" max="1" value="0" step="0.01">
+                </div>
+
+                <!-- Controles de rotación -->
+                <div class="cont-rotacion">
+                    <h3 class="texto" id="rx">Rotación en X</h3>
+                    <input autocomplete="off" type="range" id="sliderRX" class="rotacion" min="0" max="180" value="0" step="1">
+                    <h3 class="texto" id="ry">Rotación en Y</h3>
+                    <input autocomplete="off" type="range" id="sliderRY" class="rotacion" min="0" max="180" value="0" step="1">
+                    <h3 class="texto" id="rz">Rotación en XY</h3>
+                    <input autocomplete="off" type="range" id="sliderRXY" class="rotacion" min="-360" max="360" value="0" step="1">
+                </div>
+
+                <!-- Controles de escalado -->
+                <div class="cont-escalado">
+                    <h3 class="texto" id="sx">Escalado en X</h3>
+                    <input autocomplete="off" type="range" id="sliderSX" class="escalado" min="0.1" max="2" step="0.1" value="1">
+                    <h3 class="texto" id="sy">Escalado en Y</h3>
+                    <input autocomplete="off" type="range" id="sliderSY" class="escalado" min="0.1" max="2" step="0.1" value="1">
+                    <h3 class="texto" id="sy">Escalado en XY</h3>
+                    <input autocomplete="off" type="range" id="sliderSXY" class="escalado" min="0.1" max="2" step="0.1" value="1">
+                </div>
+            </div>
+
+            <div class="div-botones">
+                <button id="reset" class="boton">Reset</button>
+                <button id="aleatorio" class="boton">Color aleatorio</button>
+            </div>
+            
+        </div>
+    </div>
+    <script src="practica1.js"></script>
+</body>
+</html>
